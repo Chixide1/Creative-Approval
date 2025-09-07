@@ -12,3 +12,4 @@ wheels/
 # Custom
 .env
 .vscode
+.pytest_cache

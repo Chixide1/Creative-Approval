@@ -11,4 +11,5 @@ dependencies = [
     "pathlib>=1.0.1",
     "pillow>=11.3.0",
     "pydantic-settings>=2.10.1",
+    "pytest>=8.4.2",
 ]
