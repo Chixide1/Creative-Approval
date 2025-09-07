@@ -17,9 +17,57 @@ class ContentValidator:
     def __init__(self, config: Config):
         self.config = config
         self.rules = self._build_validation_rules()
-    
+
+    def validate_content(self, img_path: str, metadata: list[str]) -> ApprovalStatus:
+        """
+        Validate both image and metadata content.
+        """
+
+        combined_result = ApprovalStatus(status=Status.APPROVED)
+        all_reasons: list[str] = []
+        
+        if metadata:
+            metadata_result = self.validate_metadata(metadata)
+            all_reasons.extend(metadata_result.reasons)
+            
+            if metadata_result.status == Status.REJECTED:
+                combined_result.status = Status.REJECTED
+            elif metadata_result.status == Status.REQUIRES_REVIEW:
+                combined_result.status = Status.REQUIRES_REVIEW
+        
+        image_result = self.validate_image(img_path)
+        all_reasons.extend(image_result.reasons)
+        
+        if image_result.status == Status.REJECTED:
+            combined_result.status = Status.REJECTED
+        elif image_result.status == Status.REQUIRES_REVIEW and combined_result.status != Status.REJECTED:
+            combined_result.status = Status.REQUIRES_REVIEW
+        
+        combined_result.reasons = all_reasons
+        
+        self._log_combined_validation_results(img_path, combined_result, metadata is not None)
+        return combined_result
+
+    def validate_metadata(self, metadata: list[str]) -> ApprovalStatus:
+        flagged_words: list[str] = []
+        logger.info(f"metadata: {metadata}")
+
+        for word in metadata:
+            if word.lower() in self.config.PROHIBITED_KEYWORDS:
+                flagged_words.append(word)
+        
+        if flagged_words:
+            logger.info(f"Metadata Validation Failed. Words flagged were: {flagged_words}")
+            status = ApprovalStatus(status=Status.REJECTED)
+            status.reasons.append(f"The following list of words are prohibited: {", ".join(flagged_words)}")
+            return status
+        
+        logger.info(f"Metadata Validation Passed.")
+        return ApprovalStatus(status=Status.APPROVED)
+
     def _build_validation_rules(self) -> list[ValidationRule]:
         """Build the list of validation rules to apply."""
+
         return [
             ValidationRule(
                 name="contrast_check",
@@ -39,24 +87,13 @@ class ContentValidator:
                 failure_message="High red content detected - manual review required",
                 failure_action=Status.REQUIRES_REVIEW
             ),
-            # ValidationRule(
-            #     name="size_check",
-            #     check_func=lambda img: is_image_size_valid(img, self.config.MIN_WIDTH, self.config.MIN_HEIGHT),
-            #     failure_message=f"Image must be at least {self.config.MIN_WIDTH}x{self.config.MIN_HEIGHT} pixels",
-            #     failure_action=Status.REJECTED
-            # )
         ]
     
     def validate_image(self, img_path: str) -> ApprovalStatus:
         """
         Validate an image against all content policy rules.
-        
-        Args:
-            img_path: Path to the image file
-            
-        Returns:
-            ApprovalStatus with status and reasons
         """
+
         outcome = ApprovalStatus(status=Status.APPROVED)
         
         try:
@@ -79,12 +116,19 @@ class ContentValidator:
                     
                 outcome.reasons.append(rule.failure_message)
         
-        self._log_validation_results(img_path, outcome)
         return outcome
     
     def _log_validation_results(self, img_path: str, outcome: ApprovalStatus) -> None:
         """Log the final validation results."""
         logger.info(f"Validation complete for {img_path}: {outcome.status.value}")
+        if outcome.reasons:
+            for reason in outcome.reasons:
+                logger.info(f"  - {reason}")
+
+    def _log_combined_validation_results(self, img_path: str, outcome: ApprovalStatus, had_metadata: bool) -> None:
+        """Log the combined validation results."""
+        validation_types = "image and metadata" if had_metadata else "image"
+        logger.info(f"Combined {validation_types} validation complete for {img_path}: {outcome.status.value}")
         if outcome.reasons:
             for reason in outcome.reasons:
                 logger.info(f"  - {reason}")
