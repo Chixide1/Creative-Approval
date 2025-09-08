@@ -57,28 +57,26 @@
 ### Contrast / Legibility Check
 
 - **What it does:** Flags creatives with insufficient visual contrast, measured by standard deviation.
-- **Why it matters:**: CAP Code, Section 3.3 (Misleading Advertising): ads must not present information in an unclear or unintelligible manner.Global Outdoor Guidelines: require clarity and legibility for all outdoor placements.
+- **Why it matters:** Global Outdoor Guidelines: Require clarity and legibility for all outdoor placements.
 - **Outcome:** Ensures text and key visuals remain clear to the public.
 
 ### Skin Content Check
 
 - **What it does:** Flags creatives with a high proportion of skin-tone pixels.
-- **Why it matters:**: CAP Code, Section 4 (Harm and Offense): marketing must avoid sexualization or indecent depictions.Global Outdoor Guidelines: prohibit nudity or overtly sexual imagery.
+- **Why it matters:** CAP Code, Section 4 (Harm and Offense): marketing must avoid sexualization or indecent depictions.Global Outdoor Guidelines: prohibit nudity or overtly sexual imagery.
 - **Outcome:** Safeguards against inappropriate or offensive outdoor advertising.
 
 ### Blood / Red Content Check
 
 - **What it does:** Flags creatives with an unusually high proportion of red pixels, used as a proxy for blood or gore.
-- **Decision:** Requires manual review.
-- **Why it matters:**: CAP Code, Section 4.4 (Harm and Offense): marketing must not condone or encourage violence. Global Outdoor Guidelines: explicitly prohibit depictions of violence or excessive blood.
+- **Why it matters:** CAP Code, Section 4.4 (Harm and Offense): marketing must not condone or encourage violence. Global Outdoor Guidelines: explicitly prohibit depictions of violence or excessive blood.
 - **Outcome:** Prevents shocking or graphic imagery from being displayed outdoors.
 
-### Metadata / File Validation Check
+### Metadata Check
 
-- **What it does:** Validates file format, size, and dimensions against outdoor advertising standards.
-- **Decision:** Reject if the format is unsupported, the file size is excessive, or the resolution is too low to be usable.
-- **Why it matters:**: CAP Code, Section 3.1–3.3 (Misleading Advertising): ads must not mislead by omitting material information or presenting it in an unclear manner. Global Outdoor Guidelines: require creatives to be technically suitable for outdoor formats.
-- **Outcome:** Ensures creatives are technically appropriate for outdoor display.
+- **What it does:** Scans metadata string for keywords linked to prohibited categories.
+- **Why it matters:** Global Outdoor Guidelines: ban categories including nudity, sexual imagery, violence, drugs, excessive blood, gambling, tobacco, weapons, extremist content, profanity, and culturally offensive symbols.
+- **Outcome:** Ensures creatives are  content-compliant with outdoor advertising standards.
 
 ## Design Decisions & Trade-offs
 
@@ -109,4 +107,3 @@ All checks are implemented as `ValidationRule` objects. This makes the system:
 
 - Heuristics vs. Models: For speed and simplicity, I used heuristics (color ranges, basic keyword search). In production, I would adopt lightweight ML models for higher accuracy.
 - False Positives: Color-based checks may flag safe images. To avoid unfair rejections, I defaulted to REQUIRES\_REVIEW rather than outright rejection.
-- Policy Coverage: I selected rules that are both feasible to approximate offline (per the brief) and grounded in the CAP Code and Global Outdoor Guidelines.
