@@ -1,10 +1,11 @@
 import os
 from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile
 from fastapi.params import Form
 from src.core.dependencies import get_content_validator
 import tempfile
 from pathlib import Path
+from src.models.app_metrics import Metrics, MetricsDict
 from src.models.approval_status import ApprovalStatus
 from src.models.health_status import HealthStatus
 from src.services.content_validator import ContentValidator
@@ -14,6 +15,7 @@ router = APIRouter(tags=["Approval"])
 
 @router.post("/creative-approval")
 def submit_creative_for_approval(
+    request: Request,
     file: UploadFile,
     metadata: Annotated[str | None, Form()] = None,
     validator: ContentValidator = Depends(get_content_validator)
@@ -35,6 +37,8 @@ def submit_creative_for_approval(
             temp_file_path = temp_file.name
         
         result = validator.validate_content(temp_file_path, metadata)
+        request.app.state.metrics[result.status] += 1
+
         return result
         
     except Exception as e:
@@ -53,3 +57,13 @@ def submit_creative_for_approval(
 @router.get("/health")
 def get_health_status() -> HealthStatus:
     return HealthStatus()
+
+@router.get("/metrics")
+def get_metrics(request: Request) -> Metrics:
+    metrics_dict: MetricsDict = request.app.state.metrics
+    return Metrics(
+        total_requests=metrics_dict["total_requests"],
+        total_approved_decisions=metrics_dict["APPROVED"],
+        total_rejected_decisions=metrics_dict["REJECTED"],
+        total_requires_review_decisions=metrics_dict["REQUIRES_REVIEW"]
+    )
