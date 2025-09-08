@@ -18,7 +18,7 @@ class ContentValidator:
         self.config = config
         self.rules = self._build_validation_rules()
 
-    def validate_content(self, img_path: str, metadata: list[str]) -> ApprovalStatus:
+    def validate_content(self, img_path: str, metadata: str | None) -> ApprovalStatus:
         """
         Validate both image and metadata content.
         """
@@ -48,11 +48,13 @@ class ContentValidator:
         self._log_combined_validation_results(img_path, combined_result, metadata is not None)
         return combined_result
 
-    def validate_metadata(self, metadata: list[str]) -> ApprovalStatus:
+    def validate_metadata(self, metadata: str) -> ApprovalStatus:
+        metadata_words = [word.strip() for word in metadata.split(',') if word.strip()]
+        
         flagged_words: list[str] = []
-        logger.info(f"metadata: {metadata}")
+        logger.info(f"metadata: {metadata_words}")
 
-        for word in metadata:
+        for word in metadata_words:
             if word.lower() in self.config.PROHIBITED_KEYWORDS:
                 flagged_words.append(word)
         
