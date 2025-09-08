@@ -1,6 +1,8 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Config(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env")
+    
     CONTRAST_MIN: int = 60
     BLOOD_RATIO_MAX: float = 0.15
     SKIN_RATIO_MAX: float = 0.35
@@ -12,6 +14,3 @@ class Config(BaseSettings):
         "pr stunt", "hate", "discrimination", "incite violence", "harassment",
         "bullying", "extremist", "illegal activity",
     ]
-
-    class Config:
-        env_file = ".env"
