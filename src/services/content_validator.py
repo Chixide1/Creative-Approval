@@ -49,6 +49,8 @@ class ContentValidator:
         return combined_result
 
     def validate_metadata(self, metadata: str) -> ApprovalStatus:
+        """Validate metadata against prohibited keywords."""
+
         metadata_words = [word.strip() for word in metadata.split(',') if word.strip()]
         
         flagged_words: list[str] = []
