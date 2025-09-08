@@ -3,7 +3,7 @@ from src.core.logging import logger
 from PIL import Image
 from src.models.approval_status import ApprovalStatus, Status
 from src.models.validation_rule import ValidationRule
-from src.utils.image_analysis import calculate_red_pixel_ratio, calculate_contrast_std, calculate_skin_tone_ratio
+from src.utils.image_analysis import calculate_blood_pixel_ratio, calculate_contrast_std, calculate_skin_tone_ratio
 
 
 class ContentValidator:
@@ -87,7 +87,7 @@ class ContentValidator:
             ),
             ValidationRule(
                 name="blood_content_check",
-                check_func=lambda img: calculate_red_pixel_ratio(img) <= self.config.BLOOD_RATIO_MAX,
+                check_func=lambda img: calculate_blood_pixel_ratio(img) <= self.config.BLOOD_RATIO_MAX,
                 failure_message="High red content detected - manual review required",
                 failure_action=Status.REQUIRES_REVIEW
             ),

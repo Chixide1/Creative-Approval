@@ -1,5 +1,5 @@
 from enum import Enum
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class Status(str, Enum):
     APPROVED = "APPROVED",
@@ -9,4 +9,12 @@ class Status(str, Enum):
 
 class ApprovalStatus(BaseModel):
     status: Status
-    reasons: list[str] = []
+    reasons: list[str] = Field(
+        default=[],
+        examples=[
+            "Image has insufficient contrast for quality standards",
+            "High skin tone content detected - manual review required",
+            "High red content detected - manual review required",
+            "The following list of words are prohibited: guns, weapons, nudity",
+        ]
+    )

@@ -11,9 +11,9 @@ from src.models.health_status import HealthStatus
 from src.services.content_validator import ContentValidator
 from src.core.logging import logger
 
-router = APIRouter(tags=["Approval"])
+router = APIRouter()
 
-@router.post("/creative-approval")
+@router.post("/creative-approval",tags=["Approval"], response_model=ApprovalStatus)
 def submit_creative_for_approval(
     request: Request,
     file: UploadFile,
@@ -54,11 +54,11 @@ def submit_creative_for_approval(
             except:
                 pass
 
-@router.get("/health")
+@router.get("/health", tags=["System"], response_model=HealthStatus)
 def get_health_status() -> HealthStatus:
     return HealthStatus()
 
-@router.get("/metrics")
+@router.get("/metrics", tags=["System"], response_model=Metrics)
 def get_metrics(request: Request) -> Metrics:
     metrics_dict: MetricsDict = request.app.state.metrics
     return Metrics(

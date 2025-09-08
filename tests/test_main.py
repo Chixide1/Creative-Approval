@@ -6,7 +6,7 @@ from tests.utils.image_creation import create_high_contrast_image, create_test_i
 
 client = TestClient(app)
 
-def test_happy_path_approval():
+def test_high_contrast_approved():
     """High contrast image should be approved."""
 
     # Arrange
@@ -25,7 +25,7 @@ def test_happy_path_approval():
     assert approval_status.status == Status.APPROVED
     assert approval_status.reasons == []
 
-def test_rejection():
+def test_low_contrast_rejection():
     """Low contrast image should be rejected."""
 
     # Arrange
@@ -44,7 +44,7 @@ def test_rejection():
     assert approval_status.status == Status.REJECTED
     assert "Image has insufficient contrast for quality standards" in approval_status.reasons
 
-def test_error_path():
+def test_wrong_file_type_error():
     """Happy path - High contrast image should be approved."""
 
     # Arrange
