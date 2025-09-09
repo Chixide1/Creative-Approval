@@ -4,7 +4,11 @@ from src.routers.main_router import router
 from starlette.responses import Response
 
 
-app = FastAPI(title="Creative Approval Service", version="1.0.0")
+app = FastAPI(
+    title="Creative Approval Service",
+    version="1.0.0",
+    description="API for validating and approving creative content submissions."
+)
 app.state.metrics = {
     "total_requests": 0,
     "APPROVED": 0,

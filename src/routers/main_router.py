@@ -14,7 +14,13 @@ from src.core.logging import logger
 
 router = APIRouter()
 
-@router.post("/creative-approval",tags=["Approval"], response_model=ApprovalStatus)
+@router.post(
+    "/creative-approval",
+    tags=["Approval"], 
+    response_model=ApprovalStatus,
+    summary="Submit creative content for approval",
+    description="Upload an image file for content validation and approval. Supports PNG, JPEG, JPG, and GIF formats. Returns approval status with reasons if rejected or requires review."
+)
 def submit_creative_for_approval(
     request: Request,
     file: UploadFile,
@@ -55,11 +61,23 @@ def submit_creative_for_approval(
             except:
                 pass
 
-@router.get("/health", tags=["System"], response_model=HealthStatus)
+@router.get(
+    "/health", 
+    tags=["System"], 
+    response_model=HealthStatus,
+    summary="Get service health status",
+    description="Returns the current health status of the Creative Approval Service. Used for monitoring and load balancer health checks."
+)
 def get_health_status() -> HealthStatus:
     return HealthStatus()
 
-@router.get("/metrics", tags=["System"], response_model=Metrics)
+@router.get(
+    "/metrics", 
+    tags=["System"], 
+    response_model=Metrics,
+    summary="Get application metrics",
+    description="Returns current application metrics including total requests processed and breakdown of approval decisions (approved, rejected, requires review)."
+)
 def get_metrics(request: Request) -> Metrics:
     metrics_dict: MetricsDict = request.app.state.metrics
     return Metrics(
