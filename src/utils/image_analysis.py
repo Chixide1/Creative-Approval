@@ -81,4 +81,4 @@ def format_file_size(size: int) -> str:
         order += 1
         length /= 1024
     
-    return f"{length:.2g} {sizes[order]}"
+    return f"{length:.2f} {sizes[order]}"
