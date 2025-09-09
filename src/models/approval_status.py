@@ -5,7 +5,7 @@ class ImageInfo(BaseModel):
     width: int = Field(..., description="Width of the image in pixels", gt=0)
     height: int = Field(..., description="Height of the image in pixels", gt=0)
     format: str = Field(..., description="Image file format", examples=["JPEG", "PNG", "GIF", "JPG"])
-    size: int = Field(..., description="File size in bytes", gt=0)
+    size: str = Field(..., description="File size in bytes")
 
 class Status(str, Enum):
     APPROVED = "APPROVED",
