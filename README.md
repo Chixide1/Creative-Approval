@@ -7,12 +7,12 @@
 - Once you have cloned the repo to your desktop, build the Docker image:
 
   ```bash
-  docker build -t creative_approval .
+  docker build -t creative-approval .
   ```
 - Run the Docker container:
 
   ```bash
-  docker run -p 8000:8000 creative_approval
+  docker run -p 8000:8000 creative-approval
   ```
 - Navigate to [http://localhost:8000/docs](http://localhost:8000/docs) in your browser to test the endpoints via Swagger UI.
 
