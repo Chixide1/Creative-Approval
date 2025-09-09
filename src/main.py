@@ -2,7 +2,7 @@ from typing import Awaitable, Callable
 from fastapi import Request, Response, FastAPI
 from src.routers.main_router import router
 from starlette.responses import Response
-    
+
 
 app = FastAPI(title="Creative Approval Service", version="1.0.0")
 app.state.metrics = {
@@ -11,7 +11,6 @@ app.state.metrics = {
     "REJECTED": 0,
     "REQUIRES_REVIEW": 0
 }
-
 
 app.include_router(router)
 

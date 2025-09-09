@@ -1,9 +1,10 @@
+import os
 from src.core.config import Config
 from src.core.logging import logger
 from PIL import Image
-from src.models.approval_status import ApprovalStatus, Status
+from src.models.approval_status import ApprovalStatus, Status, ImageInfo
 from src.models.validation_rule import ValidationRule
-from src.utils.image_analysis import calculate_blood_pixel_ratio, calculate_contrast_std, calculate_skin_tone_ratio
+from src.utils.image_analysis import calculate_blood_pixel_ratio, calculate_contrast_std, calculate_skin_tone_ratio, format_file_size
 
 
 class ContentValidator:
@@ -44,6 +45,7 @@ class ContentValidator:
             combined_result.status = Status.REQUIRES_REVIEW
         
         combined_result.reasons = all_reasons
+        combined_result.image_info = image_result.image_info
         
         self._log_combined_validation_results(img_path, combined_result, metadata is not None)
         return combined_result
@@ -102,11 +104,13 @@ class ContentValidator:
         
         try:
             img = Image.open(img_path)
+            file_size = os.path.getsize(img_path)
+            outcome.image_info = ImageInfo(width=img.width, height=img.height, format=img.format or "Unknown", size=format_file_size(file_size))
         except (IOError, OSError) as e:
             logger.error(f"Failed to open image {img_path}: {e}")
             return ApprovalStatus(
                 status=Status.REJECTED,
-                reasons=[f"Could not process image file: {str(e)}"]
+                reasons=[f"Could not process image file: {str(e)}"],
             )
 
         for rule in self.rules:

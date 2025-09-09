@@ -70,3 +70,15 @@ def calculate_contrast_std(img: Image.Image) -> float:
     std = np.std(pixels)
 
     return std.item()
+
+def format_file_size(size: int) -> str:
+    """Convert file size in bytes to human-readable string format"""
+    sizes = ["B", "KB", "MB", "GB"]
+    order = 0
+    length = float(size)
+    
+    while length >= 1024 and order < len(sizes) - 1:
+        order += 1
+        length /= 1024
+    
+    return f"{length:.2g} {sizes[order]}"

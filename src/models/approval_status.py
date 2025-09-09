@@ -1,6 +1,12 @@
 from enum import Enum
 from pydantic import BaseModel, Field
 
+class ImageInfo(BaseModel):
+    width: int
+    height: int
+    format: str = Field(examples=["JPEG", "PNG", "GIF", "JPG"])
+    size: str 
+
 class Status(str, Enum):
     APPROVED = "APPROVED",
     REJECTED = "REJECTED"
@@ -18,3 +24,4 @@ class ApprovalStatus(BaseModel):
             "The following list of words are prohibited: guns, weapons, nudity",
         ]
     )
+    image_info: ImageInfo | None = None
