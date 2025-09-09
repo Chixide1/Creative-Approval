@@ -84,7 +84,7 @@
 
 I used Pillow to apply color masks that approximate how much of an image falls within predefined ranges for skin tones and red hues. This helps detect creatives that may depict excessive nudity or graphic blood, which are not acceptable for outdoor placements.
 
-Because color alone is not always reliable (for example, red objects that are not blood), flagged images are returned as REQUIRES\_REVIEW rather than rejected outright. In production, I would replace this heuristic with a trained model capable of distinguishing skin and blood more accurately.
+Because color alone is not always reliable (for example, red objects that are not blood), flagged images are returned as REQUIRES_REVIEW rather than rejected outright. In production, I would replace this heuristic with a trained model capable of distinguishing skin and blood more accurately.
 
 ### Metadata Keyword Check
 
@@ -99,11 +99,11 @@ Clear contrast is essential for OOH advertising to remain legible from distance.
 All checks are implemented as `ValidationRule` objects. This makes the system:
 
 - Extensible - new rules can be added easily
-- Consistent – each rule returns a clear status: APPROVED, REJECTED, or REQUIRES\_REVIEW, with reasons attached
+- Consistent - each rule returns a clear status: APPROVED, REJECTED, or REQUIRES_REVIEW, with reasons attached
 
 ---
 
 ### Trade-offs
 
 - Heuristics vs. Models: For speed and simplicity, I used heuristics (color ranges, basic keyword search). In production, I would adopt lightweight ML models for higher accuracy.
-- False Positives: Color-based checks may flag safe images. To avoid unfair rejections, I defaulted to REQUIRES\_REVIEW rather than outright rejection.
+- False Positives: Color-based checks may flag safe images. To avoid unfair rejections, I defaulted to REQUIRES_REVIEW rather than outright rejection.
